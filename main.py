@@ -1,9 +1,10 @@
 import datetime
 from inverter_classes import MyBounds, MyTakeStep
-from inverter_tools import calculate_cost, prep_obs, plot_mod_and_obs
+from inverter_tools import calculate_cost, prep_obs, print_params
 from scipy.optimize import basinhopping
 import scipy
 import numpy as np
+import pickle
 print(scipy.__version__)
 
 initial_guess = [0.25, # Snow Depth
@@ -58,6 +59,11 @@ running_data = []
 
 def store_minima(x, f, accepted):
     running_data.append((x, f))
+    print_params(x)
+    try:
+        pickle.dump((x,f), open(f'{datetime.datetime.now()}.p') )
+    except:
+        print('could not pickle dump')
 
 t_start = datetime.datetime.now()
 
