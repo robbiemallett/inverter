@@ -61,7 +61,7 @@ def store_minima(x, f, accepted):
     running_data.append((x, f))
     print_params(x)
     try:
-        pickle.dump((x,f, accepted), open(f'min_{datetime.datetime.now()}.p') )
+        pickle.dump((x,f, accepted), open(f'min_{datetime.datetime.now()}.p', 'wb') )
     except:
         print('could not pickle dump')
 
