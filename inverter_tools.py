@@ -8,6 +8,25 @@ import smrt
 import matplotlib.pyplot as plt
 
 
+def prep_obs():
+    signatures, start_dates, end_dates = {}, {}, {}
+
+    for site_number, band, pol in itertools.product([1, 2, 3], ['Ka', 'Ku'], ['VV', 'HH', 'HV']):
+        df = pd.read_excel(f'/home/robbie/Dropbox/KuKa_modelling/vishnu_real_data/{band}_RS{site_number} Site.xlsx',
+                           index_col='Unnamed: 0',
+                           sheet_name=pol,
+                           parse_dates=True)
+
+        df_resampled = df.resample('3H').mean()
+
+        key = f'{band}_{pol}_RS{site_number}'
+
+        signatures[key] = df_resampled
+
+        start_dates[key] = df_resampled.index[0]
+        end_dates[key] = df_resampled.index[-1]
+
+    return (signatures, start_dates, end_dates)
 
 def get_leg_signature(leg):
     df = pd.read_excel('/home/robbie/Dropbox/KuKa_modelling/vishnu_real_data/Legs1and2_Time_series_average.xlsx',
