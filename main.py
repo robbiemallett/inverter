@@ -81,7 +81,7 @@ fit2 = basinhopping(calculate_cost,
                     accept_test=MyBounds(initial_bounds), # Stops the basin hopping step exceeding bounds
                     callback=store_minima,
                     disp=True,
-                    niter_success=10,
+                    niter_success=1,
                   )
 
 print(running_data)
