@@ -27,7 +27,7 @@ def CL_parse(arguments):
 
     """
 
-    return_dict = {'task_id':int(arguments[1]),
+    return_dict = {'task_id':arguments[1],
                    'niter':int(arguments[2]),
                    'hpc':('-hpc' in arguments)}
 
@@ -182,9 +182,14 @@ def cost_fn(res, l):
 
 
 def calculate_cost(params, l):
-    trial_res = run_from_params(params)
 
-    cost = cost_fn(trial_res, l)
+    try:
+        trial_res = run_from_params(params)
+
+        cost = cost_fn(trial_res, l)
+    except Exception as e:
+        print(e)
+        cost = 1000
 
     return (cost)
 
