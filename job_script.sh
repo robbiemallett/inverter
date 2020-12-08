@@ -25,5 +25,5 @@
 # 8. Run the application.
 
 source /home/ucfarm0/inverse_smrt/bin/activate
-python /home/ucfarm0/inverse_smrt/inverter/main.py $SGE_TASK_ID 2
+python /home/ucfarm0/inverse_smrt/inverter/main.py $SGE_TASK_ID 2 -hpc
 
