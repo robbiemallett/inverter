@@ -7,6 +7,30 @@ import itertools
 import smrt
 import matplotlib.pyplot as plt
 
+def CL_parse(arguments):
+
+    """ Parses input from the command line
+
+    When a python script is called from the command line, arguments to the call can be extracted from sys.argsv. The
+    first argument in all of these calls is 'python'. This model is run on high performance machines via calls from
+    the command line (organised with a job script).
+    Calls from the command line should specifiy whether the machine is an hpc (with -hpc flag), and the tracks for
+    the job to run. To specify the tracks, the first argument passed should be the start track (e.g. track no 200),
+    the end track (e.g. 60,200), and the step (e.g. 1000). Such arguments would mean that the job will run tracks
+    200, 1200, 2200 etc.
+
+    Args:
+        arguments: the arguments given in the command line.
+
+    Returns:
+        A dictionary with info on the computer type and which tracks the job should run.
+
+    """
+
+    return_dict = {'task_id':int(arguments[1]),
+                   'niter':int(arguments[2])}
+
+    return(return_dict)
 
 def prep_obs():
     signatures, start_dates, end_dates = {}, {}, {}

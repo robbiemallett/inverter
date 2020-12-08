@@ -1,11 +1,24 @@
 import datetime
 from inverter_classes import MyBounds, MyTakeStep
-from inverter_tools import calculate_cost, prep_obs, print_params
+from inverter_tools import calculate_cost, prep_obs, CL_parse
+try:
+    from scipy_dev import scipy
+except:
+    pass
+
 from scipy.optimize import basinhopping
 import scipy
 import numpy as np
 import pickle
-print(scipy.__version__)
+import sys
+
+CL_input = CL_parse(sys.argv)
+job_name = 'exp'+str(CL_input['task_id'])
+niter = CL_input['niter']
+
+print(f'scipy v{scipy.__version__}')
+print(f'job_name: {job_name}')
+print(f'hops: {niter}')
 
 initial_guess = [0.25, # Snow Depth
                  0.7, # Ice Thickness
@@ -58,12 +71,8 @@ obs_dict = {'Ku_VV_Mean': np.array(Ku_VV.iloc[0]),
 running_data = []
 
 def store_minima(x, f, accepted):
-    running_data.append((x, f))
-    print_params(x)
-    try:
-        pickle.dump((x,f, accepted), open(f'min_{datetime.datetime.now()}.p', 'wb') )
-    except:
-        print('could not pickle dump')
+    running_data.append((x, f, datetime.datetime.now()))
+    pickle.dump(running_data, open(f'output/{job_name}.p', 'wb') )
 
 t_start = datetime.datetime.now()
 
@@ -71,7 +80,7 @@ print('running bh')
 fit2 = basinhopping(calculate_cost,
                     x0 = initial_guess,
                     stepsize=1,
-                    niter=5,
+                    niter=niter,
                     minimizer_kwargs={
                         'method':'SLSQP',
                         'args':(obs_dict,), # Passes through the observations for the cost function calculation
@@ -81,7 +90,6 @@ fit2 = basinhopping(calculate_cost,
                     accept_test=MyBounds(initial_bounds), # Stops the basin hopping step exceeding bounds
                     callback=store_minima,
                     disp=True,
-                    niter_success=1,
                   )
 
 print(running_data)
