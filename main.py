@@ -15,10 +15,12 @@ import sys
 CL_input = CL_parse(sys.argv)
 job_name = 'exp'+str(CL_input['task_id'])
 niter = CL_input['niter']
+hpc = CL_input['hpc']
 
 print(f'scipy v{scipy.__version__}')
 print(f'job_name: {job_name}')
 print(f'hops: {niter}')
+print(f"hpc: {hpc}")
 
 initial_guess = [0.25, # Snow Depth
                  0.7, # Ice Thickness
@@ -51,7 +53,14 @@ initial_bounds = [(0.08,0.4), # Snow Depth
 start_date, end_date = '2019-11-29 09:00:00', '2019-12-02 09:00:00'
 site_no = 2
 
-signatures, start_dates, end_dates = prep_obs()
+if hpc:
+    path_to_obs = '/home/ucfarm0/inverse_smrt/inverter/vishnu_real_data'
+    output_location = ''
+else:
+    path_to_obs = 'vishnu_real_data'
+    output_location = 'output/'
+
+signatures, start_dates, end_dates = prep_obs(path_to_obs)
 
 Ku_VV = signatures[f'Ku_VV_RS{site_no}'][str(start_date):str(end_date)]
 Ka_VV = signatures[f'Ka_VV_RS{site_no}'][str(start_date):str(end_date)]
@@ -72,7 +81,7 @@ running_data = []
 
 def store_minima(x, f, accepted):
     running_data.append((x, f, datetime.datetime.now()))
-    pickle.dump(running_data, open(f'output/{job_name}.p', 'wb') )
+    pickle.dump(running_data, open(f'{output_location}{job_name}.p', 'wb') )
 
 t_start = datetime.datetime.now()
 

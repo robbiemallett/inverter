@@ -28,15 +28,16 @@ def CL_parse(arguments):
     """
 
     return_dict = {'task_id':int(arguments[1]),
-                   'niter':int(arguments[2])}
+                   'niter':int(arguments[2]),
+                   'hpc':('-hpc' in arguments)}
 
     return(return_dict)
 
-def prep_obs():
+def prep_obs(path_to_obs):
     signatures, start_dates, end_dates = {}, {}, {}
 
     for site_number, band, pol in itertools.product([1, 2, 3], ['Ka', 'Ku'], ['VV', 'HH', 'HV']):
-        df = pd.read_excel(f'vishnu_real_data/{band}_RS{site_number} Site.xlsx',
+        df = pd.read_excel(f'{path_to_obs}/{band}_RS{site_number} Site.xlsx',
                            index_col='Unnamed: 0',
                            sheet_name=pol,
                            parse_dates=True)
@@ -52,8 +53,8 @@ def prep_obs():
 
     return (signatures, start_dates, end_dates)
 
-def get_leg_signature(leg):
-    df = pd.read_excel('vishnu_real_data/Legs1and2_Time_series_average.xlsx',
+def get_leg_signature(leg,path_to_obs):
+    df = pd.read_excel(f'{path_to_obs}/Legs1and2_Time_series_average.xlsx',
                        sheet_name=f'RS{leg} Site')
 
     return (df)
