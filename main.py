@@ -13,7 +13,7 @@ import pickle
 import sys
 
 CL_input = CL_parse(sys.argv)
-job_name = 'exp'+str(CL_input['task_id'])
+job_name = str(CL_input['task_id'])
 niter = CL_input['niter']
 hpc = CL_input['hpc']
 
