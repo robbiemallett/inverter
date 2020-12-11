@@ -4,9 +4,9 @@ The backscatter properties of snow on sea ice were monitored at Ka- and Ku-bands
 
 SMRT is a microwave transfer model that takes in geophysical parameters and can output backscatter values.
 
-The goal of this code is to 'invert' this modelling flow. That is to say, we want a machine that takes in backscatter signatures and returns geophysical parameters. 
+The goal of this code is to 'invert' this modelling flow. We want a machine that takes in backscatter signatures and returns geophysical parameters. 
 
-It is also highly desirable to link time-evolution in the backscatter signature of snow to time-evolution in its geophysical parameters (via the inverse model).
+It is also highly desirable to link time-evolution in the backscatter signature to time-evolution in the snow's geophysical parameters (via the inverse model).
 
 ## Forward-SMRT Setup
 
