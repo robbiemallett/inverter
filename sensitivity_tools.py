@@ -33,7 +33,7 @@ def CL_parse(arguments):
 
     return(return_dict)
 
-def prep_obs(path_to_obs,resampler='3H',interpolate=False):
+def prep_obs(path_to_obs):
     signatures, start_dates, end_dates = {}, {}, {}
 
     for site_number, band, pol in itertools.product([1, 2, 3], ['Ka', 'Ku'], ['VV', 'HH', 'HV']):
@@ -42,14 +42,11 @@ def prep_obs(path_to_obs,resampler='3H',interpolate=False):
                            sheet_name=pol,
                            parse_dates=True)
 
-        df_resampled = df.resample(resampler).mean()
+        df_resampled = df.resample('3H').mean()
 
         key = f'{band}_{pol}_RS{site_number}'
 
-        if interpolate:
-            signatures[key] = df_resampled.interpolate(method='linear')
-        else:
-            signatures[key] = df_resampled
+        signatures[key] = df_resampled
 
         start_dates[key] = df_resampled.index[0]
         end_dates[key] = df_resampled.index[-1]
@@ -61,8 +58,6 @@ def get_leg_signature(leg,path_to_obs):
                        sheet_name=f'RS{leg} Site')
 
     return (df)
-
-
 
 
 def check_guess_in_bounds(initial_guess, initial_bounds):
@@ -86,13 +81,13 @@ def run_model(snow_depth,
               snow_roughness_CL,
               ice_roughness_rms,
               ice_roughness_CL,
-              angles= np.arange(0, 51, 5),
               ):
     """Runs SMRT from geophysical variables and returns a dictionary of results"""
 
     K_u = 13.575e9
     K_a = 35e9
     freqs = {K_u: 'Ku', K_a: 'Ka'}
+    angles = np.arange(0, 51, 5)
 
     snow_air_interface = IEM_Fung92_Briogoni10(roughness_rms=snow_roughness_rms * 1e-3,
                                                corr_length=snow_roughness_CL * 1e-3)
@@ -148,7 +143,9 @@ def run_model(snow_depth,
     return (results)
 
 
-def plot_mod_and_obs(res, l, legend=False, angles = np.arange(0, 51, 5)):
+def plot_mod_and_obs(res, l, legend=False):
+
+    angles = np.arange(0, 51, 5)
 
     for key in res.keys():
 
