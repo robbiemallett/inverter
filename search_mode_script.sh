@@ -27,5 +27,4 @@
 #                                                     job_name      niter   hpc_flag
 
 source /home/ucfarm0/inverse_smrt/bin/activate
-python /home/ucfarm0/inverse_smrt/inverter/main.py testing_$SGE_TASK_ID 2 -hpc
-
+python /home/ucfarm0/inverse_smrt/inverter/search_mode.py testing_$SGE_TASK_ID 2 -hpc
