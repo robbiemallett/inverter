@@ -7,6 +7,24 @@ import itertools
 import smrt
 import matplotlib.pyplot as plt
 
+def get_initial_bounds():
+    initial_bounds = [(0.08, 0.6),  # Snow Depth
+                      (0.6, 2.5),  # Ice Thickness
+                      (0.05, 3),  # Ice Salinity
+                      (790, 920),  # Ice Density
+                      (255, 270),  # Temperature
+                      (0.1, 0.4),  # Snow MCL
+                      (0.1, 1),  # Ice MCL
+                      (250, 400),  # Snow Density
+                      #                  (0,1), # Snow Salinity
+                      (0.3, 1.5),  # Snow RMS
+                      (8, 120),  # Snow RCL
+                      (0.1, 2.3),  # Ice RMS
+                      (10, 150)]  # Ice RCL
+
+    return(initial_bounds)
+
+
 def CL_parse(arguments):
 
     """ Parses input from the command line
@@ -56,11 +74,13 @@ def prep_obs(path_to_obs,resampler='3H',interpolate=False):
 
     return (signatures, start_dates, end_dates)
 
-def get_leg_signature(leg,path_to_obs):
-    df = pd.read_excel(f'{path_to_obs}/Legs1and2_Time_series_average.xlsx',
-                       sheet_name=f'RS{leg} Site')
+# To delete
 
-    return (df)
+# def get_leg_signature(leg,path_to_obs):
+#     df = pd.read_excel(f'{path_to_obs}/Legs1and2_Time_series_average.xlsx',
+#                        sheet_name=f'RS{leg} Site')
+#
+#     return (df)
 
 
 
@@ -146,6 +166,23 @@ def run_model(snow_depth,
         results[f'{freqs[freq]}_{pol_inc}{pol}'] = np.array(s_res['sigma'])
 
     return (results)
+
+def get_obs_dict(start_date='2019-11-29 09:00:00',
+                 end_date='2019-12-01 06:00:00',
+                 site_no=2,
+                 path_to_obs='../vishnu_real_data'):
+
+    signatures, start_dates, end_dates = prep_obs(path_to_obs)
+
+    obs_dict = {}
+    for i, j in itertools.product(['Ku', 'Ka'], ['VV', 'HV', 'HH']):
+        df = signatures[f'{i}_{j}_RS{site_no}'][str(start_date):str(end_date)]
+
+        col_means = [np.nanmean(df[column]) for column in df.columns]
+
+        obs_dict[f'{i}_{j}_Mean'] = col_means
+
+    return(obs_dict)
 
 
 def plot_mod_and_obs(res, l, legend=False, angles = np.arange(0, 51, 5)):
