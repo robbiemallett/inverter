@@ -61,6 +61,7 @@ print('running bh')
 fit2 = basinhopping(calculate_cost,
                     x0 = initial_guess,
                     stepsize=1,
+                    T=5,
                     niter=niter,
                     minimizer_kwargs={
                         'method':'SLSQP',
