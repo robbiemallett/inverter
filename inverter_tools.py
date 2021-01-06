@@ -185,9 +185,16 @@ def get_obs_dict(start_date='2019-11-29 09:00:00',
     return(obs_dict)
 
 
-def plot_mod_and_obs(res, l, legend=False, angles = np.arange(0, 51, 5)):
+def plot_mod_and_obs(mod,
+                     obs,
+                     legend=False,
+                     angles = np.arange(0, 51, 5),
+                     shade_cost=True,
+                     show=True):
 
-    for key in res.keys():
+    fig, ax = plt.subplots(1,1,figsize=(8,5))
+
+    for key in mod.keys():
 
         if 'Ku' in key:
             color = 'darkblue'
@@ -197,11 +204,19 @@ def plot_mod_and_obs(res, l, legend=False, angles = np.arange(0, 51, 5)):
             ls = '-'
         else:
             ls = '--'
-        plt.ylabel('Backscatter (dB)', fontsize='x-large')
-        plt.xlabel('Inc. Angle', fontsize='x-large')
-        plt.plot(angles, res[key], marker='s', label=f'{key}_Mod', color=color, ls=ls)
+        ax.set_ylabel('Backscatter (dB)', fontsize='x-large')
+        ax.set_xlabel(r'Inc. Angle ($^{\circ}$)', fontsize='x-large')
+        ax.plot(angles, mod[key], marker='s', label=f'{key[:2]} {key[3:5]} Mod', color=color, ls=ls)
 
-        plt.plot(angles, l[f'{key}_Mean'], marker='^', label=f'{key}_Obs', color=color, ls=ls)
+        ax.plot(angles, obs[f'{key}_Mean'], marker='^', label=f'{key[:2]} {key[3:5]} Obs', color=color, ls=ls)
+
+        if shade_cost:
+            cost = np.round(cost_fn(mod,obs),decimals=2)
+            ax.annotate(f'Cost: {cost}',xy=(0.99,0.95),xycoords='axes fraction',
+                        ha='right',fontsize='large')
+            ax.fill_between(angles, mod[key], obs[f'{key}_Mean'],color='grey',alpha = 0.3)
+
+
 
     if legend:
         plt.legend(fontsize='x-large',
@@ -209,7 +224,9 @@ def plot_mod_and_obs(res, l, legend=False, angles = np.arange(0, 51, 5)):
                   bbox_to_anchor=[1, 0]
                   )
 
-    plt.show()
+    if show: plt.show()
+
+    return(fig)
 
 
 
